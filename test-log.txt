@@ -1128,19 +1128,6 @@ DEBUG:unenscape_Google_bang_URL:esc_URL = https://groups.google.com/forum/?_esca
 ok
 
 ----------------------------------------------------------------------
-Ran 3 tests in 36.116s
+Ran 3 tests in 31.608s
 
 OK
-send: u'GET /d/forum/jbrout HTTP/1.1\r\nAccept-Encoding: identity\r\nHost: groups.google.com\r\nConnection: close\r\nUser-Agent: Python-urllib/2.7\r\n\r\n'
-reply: 'HTTP/1.1 302 Moved Temporarily\r\n'
-header: Location: https://groups.google.com/d/forum/jbrout
-header: Content-Type: text/html; charset=UTF-8
-header: Date: Fri, 27 Dec 2013 03:31:46 GMT
-header: Expires: Fri, 27 Dec 2013 03:31:46 GMT
-header: Cache-Control: private, max-age=0
-header: X-Content-Type-Options: nosniff
-header: X-Frame-Options: SAMEORIGIN
-header: X-XSS-Protection: 1; mode=block
-header: Server: GSE
-header: Alternate-Protocol: 80:quic
-header: Connection: close

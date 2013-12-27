@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function, absolute_import
+
 import logging
 import unittest
 import gg_scrapper
@@ -12,16 +12,16 @@ EXP_URL = 'https://groups.google.com/forum/' + \
 
 class TestGGScrapper(unittest.TestCase):
     def test_URL_conversion(self):
-        obs_URL = gg_scrapper.GooglePage.unenscape_Google_bang_URL(IN_URL)
+        obs_URL = gg_scrapper.Group.unenscape_Google_bang_URL(IN_URL)
         self.assertEqual(obs_URL, EXP_URL)
 
     def test_do_redirect(self):
-        obs_URL = gg_scrapper.GooglePage.do_redirect(ORIG_URL)
+        obs_URL = gg_scrapper.Group.do_redirect(ORIG_URL)
         self.assertEqual(obs_URL, EXP_URL)
 
     def test_collecting_topics(self):
-        page = gg_scrapper.GooglePage(IN_URL)
-        topics = page.get_topics(page.bs_page)
+        page = gg_scrapper.Group(IN_URL)
+        topics = page.get_topics()
         logging.debug("number of topics = %d", len(topics))
         self.assertGreater(len(topics), 0)
 

@@ -1,7 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import re
-import urllib2
+import urllib.request
+import urllib.error
+import urllib.parse
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
@@ -10,24 +12,15 @@ logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
 TOPIC_COUNT_RE = re.compile(r'\D+ \d+ - \d+ \D+ (\d+) \D+$')
 
 
-class Topic(object):
-    def __init__(self, URL, name):
-        self.name = name
-        self.root = URL  # root of the discussion
-
-    def __unicode__(self):
-        return "%s: %s" % (self.root, self.name)
-
-
-class GooglePage(object):
-    verb_handler = urllib2.HTTPHandler()
+class Page(object):
+    verb_handler = urllib.request.HTTPHandler()
     if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
         verb_handler.set_http_debuglevel(2)
-    redir_handler = urllib2.HTTPRedirectHandler()
-    opener = urllib2.build_opener(verb_handler, redir_handler)
+    redir_handler = urllib.request.HTTPRedirectHandler()
+    opener = urllib.request.build_opener(verb_handler, redir_handler)
 
-    def __init__(self, URL):
-        self.bs_page = self.get_first_page_BS(URL)
+    def __init__(self):
+        pass
 
     @staticmethod
     def unenscape_Google_bang_URL(old_URL):
@@ -51,14 +44,39 @@ class GooglePage(object):
             logging.debug('url = {}'.format(new_URL))
             return cls.unenscape_Google_bang_URL(new_URL)
         else:
-            raise urllib2.HTTPError('Unknown URL: {}'.format(URL))
+            raise urllib.error.HTTPError('Unknown URL: {}'.format(URL))
 
-    def get_first_page_BS(self, URL):
+    def _get_page_BS(self, URL):
         res = self.opener.open(self.do_redirect(URL))
         in_str = res.read()
         bs = BeautifulSoup(in_str)
         res.close()
         return bs
+
+
+class Article(Page):
+    def __init__(self):
+        super(Article, self).__init__()
+
+
+class Topic(Page):
+    def __init__(self, URL, name):
+        super(Topic, self).__init__()
+        self.name = name
+        self.root = URL
+
+    def __unicode__(self):
+        return "%s: %s" % (self.root, self.name)
+
+    def get_articles(self):
+        page = self._get_page_BS(self.root)
+        page = page
+
+
+class Group(Page):
+    def __init__(self, URL):
+        super(Group, self).__init__()
+        self.group_URL = URL
 
     def get_count_topics(self, BS):
         '''Get total number of topics from the number on the page
@@ -74,13 +92,14 @@ class GooglePage(object):
         i_str = i_elem[0].string
         return int(TOPIC_COUNT_RE.match(i_str).group(1))
 
-    def get_topics(self, BS):
+    def get_topics(self):
         '''Recursively[?] get all topic (as special objects)
         Also return (for error checking) number of topics from the head
         of the topic page.
         '''
         out = []
         other = []
+        BS = self._get_page_BS(self.group_URL)
         for a_elem in BS.find_all('a'):
             if 'title' in a_elem.attrs:
                 # filter out all-non-topic <a>s
@@ -92,8 +111,8 @@ class GooglePage(object):
                 other.append(a_elem)
 
         if len(other) == 1:
-            new_bs = BeautifulSoup(self.opener.open(other[0]['href']).read())
-            out.extend(self.get_topics(new_bs))
+            new_bs = Group(other[0]['href'])
+            out.extend(new_bs.get_topics())
         elif len(other) != 0:
             raise ValueError(
                 'There must be either one or none link to the next page!')
