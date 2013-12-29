@@ -4,12 +4,15 @@ import re
 import urllib.request
 import urllib.error
 import urllib.parse
+#from concurrent.futures import ProcessPoolExecutor
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
                     level=logging.DEBUG)
 
 TOPIC_COUNT_RE = re.compile(r'\D+ \d+ - \d+ \D+ (\d+) \D+$')
+ARTICL_MSG_URL_RE = re.compile(r'https://groups.google.com/d/msg/')
+ARTICLE_COUNT_RE = re.compile(r'\D+ \d+\D+\d+ \D+ (\d+) \D+$')
 
 
 class Page(object):
@@ -55,22 +58,49 @@ class Page(object):
 
 
 class Article(Page):
-    def __init__(self):
+    def __init__(self, URL):
         super(Article, self).__init__()
+        self.root = URL
 
 
 class Topic(Page):
     def __init__(self, URL, name):
         super(Topic, self).__init__()
         self.name = name
-        self.root = URL
+        self.root = self.do_redirect(URL)
 
     def __unicode__(self):
         return "%s: %s" % (self.root, self.name)
 
+    @staticmethod
+    def get_one_article(elem):
+        return elem
+
+    def get_count_articles(self):
+        '''Get total number of articles from the number on the page
+        itself.
+        '''
+        BS = self._get_page_BS(self.root)
+        i_elem = BS.find_all('i')
+        if len(i_elem) <= 0:
+            raise ValueError('Cannot find count of topics!')
+
+        i_str = i_elem[0].string
+        logging.debug('i_str = {}'.format(i_str))
+        logging.debug('RE = {}'.format(ARTICLE_COUNT_RE.pattern))
+        return int(ARTICLE_COUNT_RE.match(i_str).group(1))
+
     def get_articles(self):
+        out = []
         page = self._get_page_BS(self.root)
-        page = page
+        for a_elem in page.find_all('a'):
+            if 'href' in a_elem.attrs:
+                a_href = a_elem['href']
+                if ARTICL_MSG_URL_RE.match(a_href) is not None:
+                    logging.debug('a_elem = %s', a_href)
+                    out.append(Article(a_href))
+
+        return out
 
 
 class Group(Page):
@@ -78,7 +108,8 @@ class Group(Page):
         super(Group, self).__init__()
         self.group_URL = URL
 
-    def get_count_topics(self, BS):
+    @staticmethod
+    def get_count_topics(BS):
         '''Get total number of topics from the number on the page
         itself.
 
@@ -92,6 +123,17 @@ class Group(Page):
         i_str = i_elem[0].string
         return int(TOPIC_COUNT_RE.match(i_str).group(1))
 
+    @staticmethod
+    def get_one_topic(elem):
+        if 'title' in elem.attrs:
+            # filter out all-non-topic <a>s
+            logging.debug('href = %s', elem['href'])
+            logging.debug('title = %s', elem['title'])
+            return True, Topic(elem['href'], elem['title'])
+        else:
+            logging.debug('other = %s', elem)
+            return False, elem
+
     def get_topics(self):
         '''Recursively[?] get all topic (as special objects)
         Also return (for error checking) number of topics from the head
@@ -101,14 +143,11 @@ class Group(Page):
         other = []
         BS = self._get_page_BS(self.group_URL)
         for a_elem in BS.find_all('a'):
-            if 'title' in a_elem.attrs:
-                # filter out all-non-topic <a>s
-                logging.debug('href = %s', a_elem['href'])
-                logging.debug('title = %s', a_elem['title'])
-                out.append(Topic(a_elem['href'], a_elem['title']))
+            is_topic, res = self.get_one_topic(a_elem)
+            if is_topic:
+                out.append(res)
             else:
-                logging.debug('other = %s', a_elem)
-                other.append(a_elem)
+                other.append(res)
 
         if len(other) == 1:
             new_bs = Group(other[0]['href'])
