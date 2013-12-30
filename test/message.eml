@@ -1,0 +1,95 @@
+Received: by 10.52.108.162 with SMTP id hl2mr2540708vdb.27.1304342042063;
+        Mon, 02 May 2011 06:14:02 -0700 (PDT)
+X-BeenThere: jbrout@googlegroups.com
+Received: by 10.52.91.165 with SMTP id cf5ls1513548vdb.1.gmail; Mon, 02 May
+ 2011 06:14:01 -0700 (PDT)
+Received: by 10.52.115.164 with SMTP id jp4mr2877373vdb.20.1304342041446;
+        Mon, 02 May 2011 06:14:01 -0700 (PDT)
+Received: by 10.52.115.164 with SMTP id jp4mr2877372vdb.20.1304342041432;
+        Mon, 02 May 2011 06:14:01 -0700 (PDT)
+Return-Path: <chartier...@gmail.com>
+Received: from mail-qy0-f174.google.com (mail-qy0-f174.google.com [209.85.216.174])
+        by gmr-mx.google.com with ESMTPS id dq1si27474vdb.4.2011.05.02.06.14.01
+        (version=TLSv1/SSLv3 cipher=OTHER);
+        Mon, 02 May 2011 06:14:01 -0700 (PDT)
+Received-SPF: pass (google.com: domain of chartier...@gmail.com designates 209.85.216.174 as permitted sender) client-ip=209.85.216.174;
+Authentication-Results: gmr-mx.google.com; spf=pass (google.com: domain of chartier...@gmail.com designates 209.85.216.174 as permitted sender) smtp.mail=chartier...@gmail.com; dkim=pass (test mode) head...@gmail.com
+Received: by qyk7 with SMTP id 7so1309128qyk.19
+        for <jbr...@googlegroups.com>; Mon, 02 May 2011 06:14:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:date:message-id:subject:from:to
+         :content-type;
+        bh=Nalzo4HWmw8csZHQI1EnJTSkR0XU4A34QoJmVmekz6U=;
+        b=M7NzjgATs/y0xZ12nA21o5uWlaqi8gGrd4giou2t4kDTDQ2YNaBf2ziHdrWz8UbkQ5
+         dLTYaYVWCndQMukVsIZiC7d+vOGvW/+gigEDT3Fe5yyugnJmmvsnBA5KBF6S0wejNZJo
+         ifmkRWW8eTTcMeRavBsy9l8XIkPSxxKY29aPA=
+DomainKey-Signature: a=rsa-sha1; c=nofws;
+        d=gmail.com; s=gamma;
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        b=V18crP15nGTVRRJzAzpgXM79+GV+wo4V4sbl+wDdtS0FZ84QT3XeUGPgn8N66v3FZa
+         rJDmZbR1TfHzhh42xAuL0o9pgkNqUkjEnsHdCi5WMKckCE1azmyvCeV4e7rgE3+dfAVM
+         attd9s30gSz4l7D1sBR+CWyPNovlHgJ4rFcNU=
+MIME-Version: 1.0
+Received: by 10.229.66.25 with SMTP id l25mr6066398qci.265.1304342041056; Mon,
+ 02 May 2011 06:14:01 -0700 (PDT)
+Received: by 10.229.34.145 with HTTP; Mon, 2 May 2011 06:14:01 -0700 (PDT)
+Date: Mon, 2 May 2011 15:14:01 +0200
+Message-ID: <BANLkTikms4MWTtUQE+pJEr2oAro_1FCfLg@mail.gmail.com>
+Subject: repo version incompatible with ubuntu 11.04 ?
+From: Francois Chartier <chartier...@gmail.com>
+To: jbrout@googlegroups.com
+Content-Type: multipart/alternative; boundary=0016e64ea45405d6cf04a24acc7a
+
+
+--0016e64ea45405d6cf04a24acc7a
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Read today on http://doc.ubuntu-fr.org/jbrout : apparently, the repository
+version of jbrout has some compatibility issue with ubuntu 11.04:
+(But I haven't tried 11.04 myself yet, and am using SVN version, so... I'm
+just relaying it for info):
+
+29/04/2011 - Ubuntu 11.04 (natty) : la version jBrout pr=E9sente dans le d=
+=E9p=F4t
+externe (0.3.284) n'est pas compatible avec Ubuntu 11.04. Message d'erreur =
+:
+
+
+    Photo has incorrect exif/iptc tags, can't be imported
+
+
+
+The author of the page also complains that jbrout uses 100% of his CPU...
+
+
+Best regards
+Francois
+
+--0016e64ea45405d6cf04a24acc7a
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Read today on <a href=3D"http://doc.ubuntu-fr.org/jbrout">http://doc.ubuntu=
+-fr.org/jbrout</a> : apparently, the repository version of jbrout has some =
+compatibility issue with ubuntu 11.04: <br>(But I haven&#39;t tried 11.04 m=
+yself yet, and am using SVN version, so... I&#39;m just relaying it for inf=
+o): <br>
+<br><p>
+
+29/04/2011 - Ubuntu 11.04 (natty) : la version jBrout pr=E9sente dans le=20
+d=E9p=F4t externe (0.3.284) n&#39;est pas compatible avec Ubuntu 11.04.
+Message d&#39;erreur :
+
+</p>
+<pre class=3D"code">    Photo has incorrect exif/iptc tags, can&#39;t be im=
+ported<br><br><br><br></pre>The author of the page also complains that jbro=
+ut uses 100% of his CPU... <br><br><br>Best regards <br>Francois<br>
+<br>
+<p>
+
+<br></p>
+
+--0016e64ea45405d6cf04a24acc7a--
+

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os.path
 import unittest
 import gg_scrapper
 
@@ -9,6 +10,8 @@ ORIG_URL = 'http://groups.google.com/d/forum/jbrout'
 EXP_URL = 'https://groups.google.com/forum/' + \
     '?_escaped_fragment_=forum/jbrout'
 TOPIC_URL = 'https://groups.google.com/forum/#!topic/jbrout/xNwoVmC07KI'
+ARTICLE_URL = 'https://groups.google.com/forum/#!msg/jbrout' + \
+    '/xNwoVmC07KI/OfpRHFscUkwJ'
 
 
 class TestGGScrapperFunctional(unittest.TestCase):
@@ -28,6 +31,20 @@ class TestGGScrapperFunctional(unittest.TestCase):
         logging.debug('article_count = {0:d}'.format(article_count))
         logging.debug('articles = len {0:d}'.format(len(articles)))
         self.assertEqual(len(articles), article_count)
+
+    def test_get_raw_article(self):
+        self.maxDiff = None
+        logging.debug('article = URL {}'.format(ARTICLE_URL))
+        article = gg_scrapper.Article(ARTICLE_URL)
+        logging.debug('article = raw URL {}'.format(article.root))
+
+        rfc_msg = article.collect_message().replace('\r\n', '\n')
+        rfc_msg = '\n'.join(rfc_msg.split('\n')[1:])
+
+        exp_file_name = os.path.join(os.path.dirname(__file__), 'message.eml')
+        with open(exp_file_name, 'r', encoding='utf8') as exp_f:
+            self.assertEqual(rfc_msg, exp_f.read())
+
 
 if __name__ == '__main__':
     unittest.main()

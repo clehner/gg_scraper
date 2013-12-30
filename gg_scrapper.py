@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import re
+import subprocess
 import urllib.request
 import urllib.error
 import urllib.parse
@@ -60,7 +61,17 @@ class Page(object):
 class Article(Page):
     def __init__(self, URL):
         super(Article, self).__init__()
-        self.root = URL
+        self.root = URL.replace('#!msg/', 'message/raw?msg=')
+        self.raw_message = ''
+
+    def collect_message(self):
+        with self.opener.open(self.root) as res:
+            raw_msg = res.read()
+            proc = subprocess.Popen(['/usr/bin/formail'],
+                                    stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE)
+            result = proc.communicate(raw_msg)[0]
+            return result.decode()
 
 
 class Topic(Page):
@@ -68,6 +79,7 @@ class Topic(Page):
         super(Topic, self).__init__()
         self.name = name
         self.root = self.do_redirect(URL)
+        self.articles = []
 
     def __unicode__(self):
         return "%s: %s" % (self.root, self.name)
