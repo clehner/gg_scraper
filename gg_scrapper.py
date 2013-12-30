@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import mailbox
 import re
 import subprocess
 import urllib.request
@@ -169,3 +170,32 @@ class Group(Page):
                 'There must be either one or none link to the next page!')
 
         return out
+
+    def collect_group(self):
+        topics = self.get_topics()
+        for top in topics:
+            arts = top.get_articles()
+            top.articles = arts
+            for a in arts:
+                msg = a.collect_message()
+                a.raw_message = msg
+
+
+class MBOX(mailbox.mbox):
+    def __init__(self, filename):
+        super(MBOX, self).__init__()
+        self.box_name = filename
+
+    def write_group(self, group_object):
+        pass
+
+
+def main(group_name, group_URL):
+    # Collect all messages to the internal variables
+    grp = Group(group_URL)
+    grp.collect_group()
+
+    # Write MBOX
+    mbx = MBOX()
+    mbx.format_mbox(grp)
+    mbx.save("{}.mbx".format(group_name))
