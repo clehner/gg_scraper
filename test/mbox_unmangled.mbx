@@ -1,0 +1,252 @@
+From scho...@schovi.cz  Thu Jan  2 16:12:04 2014
+Received: by 10.224.192.193 with SMTP id dr1mr1092656qab.9.1306595926917;
+        Sat, 28 May 2011 08:18:46 -0700 (PDT)
+X-BeenThere: javascriptcz@googlegroups.com
+Received: by 10.224.187.145 with SMTP id cw17ls698645qab.2.gmail; Sat, 28 May
+ 2011 08:18:45 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.224.205.130 with SMTP id fq2mr904146qab.18.1306595925702; Sat,
+ 28 May 2011 08:18:45 -0700 (PDT)
+Received: by p6g2000vbn.googlegroups.com with HTTP; Sat, 28 May 2011 08:18:45
+ -0700 (PDT)
+Date: Sat, 28 May 2011 08:18:45 -0700 (PDT)
+User-Agent: G2/1.0
+X-HTTP-UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7)
+ AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.772.0 Safari/535.1,gzip(gfe)
+Message-ID: <c4ee7911-2a16-487b-8d96-1c0997cc1e24@p6g2000vbn.googlegroups.com>
+Subject: =?ISO-8859-2?Q?Zdroje=2C_kter=E9_byste_nem=ECli_minout=2E?=
+From: David Schovanec <schovanec@schovi.cz>
+To: "javascript.cz" <javascriptcz@googlegroups.com>
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: quoted-printable
+
+
+Rozs=E1hl=E9 pojedn=E1n=ED o tom, jak se pracuje s funkcema -
+http://kangax.github.com/nfe/
+
+Blog o v=B9em mo=BEn=E9m a nemo=BEn=E9m kolem javascriptu
+http://javascriptweblog.wordpress.com/
+
+
+From richte...@gmail.com  Thu Jan  2 16:12:06 2014
+Received: by 10.224.136.200 with SMTP id s8mr198006qat.21.1306398867334;
+        Thu, 26 May 2011 01:34:27 -0700 (PDT)
+X-BeenThere: javascriptcz@googlegroups.com
+Received: by 10.224.187.145 with SMTP id cw17ls261575qab.2.gmail; Thu, 26 May
+ 2011 01:34:26 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.224.32.129 with SMTP id c1mr163718qad.40.1306398866188; Thu,
+ 26 May 2011 01:34:26 -0700 (PDT)
+Received: by a26g2000vbo.googlegroups.com with HTTP; Thu, 26 May 2011 01:34:26
+ -0700 (PDT)
+Date: Thu, 26 May 2011 01:34:26 -0700 (PDT)
+User-Agent: G2/1.0
+X-HTTP-UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7)
+ AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.71 Safari/534.24,gzip(gfe)
+Message-ID: <7f58c175-0cc9-4fc9-850d-d4f5ec825fca@a26g2000vbo.googlegroups.com>
+Subject: SproutCore
+From: Josef Richter <richter.josef@gmail.com>
+To: "javascript.cz" <javascriptcz@googlegroups.com>
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: quoted-printable
+
+
+Tak dneska bylo ohl=E1=B9eno SproutCore 2.0 a je k dispozici developer
+preview.
+
+Hlavn=ED zm=ECna je ve view layer - bude se pou=BE=EDvat nom=E1ln=EC html+c=
+ss a
+handlebars templating. To mi na p=F8edchoz=EDch verz=EDch vadilo nejv=EDc, =
+=BEe
+se celej view vlastn=EC psal z javascriptu, proto=BEe tam byly
+p=F8eddefinovan=FD v=B9echny pages, panes, buttons, widgets, atd. tak=BEe t=
+y
+appky pak vypadaly v=B9echny stejn=EC (hnusn=EC) a bylo to t=EC=BEkop=E1dn=
+=FD.
+
+http://blog.sproutcore.com/announcing-sproutcore-2-0/
+
+
+From damn...@gmail.com  Thu Jan  2 16:12:07 2014
+Received: by 10.100.168.2 with SMTP id q2mr1217945ane.14.1306495789592;
+        Fri, 27 May 2011 04:29:49 -0700 (PDT)
+X-BeenThere: javascriptcz@googlegroups.com
+Received: by 10.90.58.22 with SMTP id g22ls443766aga.2.gmail; Fri, 27 May 2011
+ 04:29:49 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.90.1.10 with SMTP id 10mr123075aga.25.1306495789240; Fri, 27
+ May 2011 04:29:49 -0700 (PDT)
+Received: by n10g2000yqf.googlegroups.com with HTTP; Fri, 27 May 2011 04:29:49
+ -0700 (PDT)
+Date: Fri, 27 May 2011 04:29:49 -0700 (PDT)
+In-Reply-To: <7f58c175-0cc9-4fc9-850d-d4f5ec825fca@a26g2000vbo.googlegroups.com>
+References: <7f58c175-0cc9-4fc9-850d-d4f5ec825fca@a26g2000vbo.googlegroups.com>
+User-Agent: G2/1.0
+X-HTTP-UserAgent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_7; cs-cz)
+ AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1,gzip(gfe)
+Message-ID: <71c066ac-67fa-4301-8aa2-e65bef981ad7@n10g2000yqf.googlegroups.com>
+Subject: Re: SproutCore
+From: pepe <damn.pepe@gmail.com>
+To: "javascript.cz" <javascriptcz@googlegroups.com>
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: quoted-printable
+
+
+Pou=BE=EDval jsi to u=BE na n=EC=E8em? Ja se st=E1le nemu=BEu p=F8esv=ECd=
+=E8it, =BEe to m=E1m
+vyzkou=B9et. A jak zn=E1mo dobr=E9 p=F8=EDklady t=E1hnou.
+
+
+On 26 kv=EC, 10:34, Josef Richter <richter.josef@gmail.com> wrote:
+> Tak dneska bylo ohl=E1=B9eno SproutCore 2.0 a je k dispozici developer
+> preview.
+>
+> Hlavn=ED zm=ECna je ve view layer - bude se pou=BE=EDvat nom=E1ln=EC html=
++css a
+> handlebars templating. To mi na p=F8edchoz=EDch verz=EDch vadilo nejv=EDc=
+, =BEe
+> se celej view vlastn=EC psal z javascriptu, proto=BEe tam byly
+> p=F8eddefinovan=FD v=B9echny pages, panes, buttons, widgets, atd. tak=BEe=
+ ty
+> appky pak vypadaly v=B9echny stejn=EC (hnusn=EC) a bylo to t=EC=BEkop=E1d=
+n=FD.
+>
+> http://blog.sproutcore.com/announcing-sproutcore-2-0/
+
+
+From richte...@gmail.com  Thu Jan  2 16:12:07 2014
+Received: by 10.224.9.144 with SMTP id l16mr693260qal.26.1306497361290;
+        Fri, 27 May 2011 04:56:01 -0700 (PDT)
+X-BeenThere: javascriptcz@googlegroups.com
+Received: by 10.224.175.74 with SMTP id w10ls508844qaz.0.gmail; Fri, 27 May
+ 2011 04:56:01 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.224.186.16 with SMTP id cq16mr523722qab.19.1306497361142; Fri,
+ 27 May 2011 04:56:01 -0700 (PDT)
+Received: by v31g2000vbs.googlegroups.com with HTTP; Fri, 27 May 2011 04:56:01
+ -0700 (PDT)
+Date: Fri, 27 May 2011 04:56:01 -0700 (PDT)
+In-Reply-To: <71c066ac-67fa-4301-8aa2-e65bef981ad7@n10g2000yqf.googlegroups.com>
+References: <7f58c175-0cc9-4fc9-850d-d4f5ec825fca@a26g2000vbo.googlegroups.com>
+ <71c066ac-67fa-4301-8aa2-e65bef981ad7@n10g2000yqf.googlegroups.com>
+User-Agent: G2/1.0
+X-HTTP-UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7)
+ AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.71 Safari/534.24,gzip(gfe)
+Message-ID: <c6e41779-e622-4559-9381-9f250e90370d@v31g2000vbs.googlegroups.com>
+Subject: Re: SproutCore
+From: Josef Richter <richter.josef@gmail.com>
+To: "javascript.cz" <javascriptcz@googlegroups.com>
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: quoted-printable
+
+
+Na produk=E8n=ED v=ECc ne. Sp=ED=B9 jsem si s t=EDm jenom hr=E1l, zkou=B9el=
+ tutorialy
+a tak. Tam byl obrovskej probl=E9m (podle m=EC) ta View vrstva, kter=E1 byl=
+a
+stra=B9nej mastodont a tla=E8ila t=EC do n=ECjak=FDho stylu. Proto ty appky
+v=B9echny vypadaly prakticky stejn=EC jako MobileMe.
+
+A proto taky spoustu lid=ED nadchlo sp=ED=B9 Backbone, kter=FD na to =B9lo =
+z
+druh=E9 strany a naopak je ultrajednoduch=FD. Nem=E1 v sob=EC nap=F8. v=F9b=
+ec
+=BE=E1dn=FD templatov=E1n=ED a i ten MVC je tam trochu specifickej.
+
+Ten SproutCore 2.0 by kone=E8n=EC mohl b=FDt pr=F9lom v popularit=EC. Ten Y=
+ehuda
+nen=ED blbej a jeho ruka na tom za=E8=EDn=E1 b=FDt vid=ECt :-)
+
+On May 27, 1:29=A0pm, pepe <damn.pepe@gmail.com> wrote:
+> Pou=BE=EDval jsi to u=BE na n=EC=E8em? Ja se st=E1le nemu=BEu p=F8esv=ECd=
+=E8it, =BEe to m=E1m
+> vyzkou=B9et. A jak zn=E1mo dobr=E9 p=F8=EDklady t=E1hnou.
+>
+> On 26 kv=EC, 10:34, Josef Richter <richter.josef@gmail.com> wrote:
+>
+>
+>
+>
+>
+>
+>
+> > Tak dneska bylo ohl=E1=B9eno SproutCore 2.0 a je k dispozici developer
+> > preview.
+>
+> > Hlavn=ED zm=ECna je ve view layer - bude se pou=BE=EDvat nom=E1ln=EC ht=
+ml+css a
+> > handlebars templating. To mi na p=F8edchoz=EDch verz=EDch vadilo nejv=
+=EDc, =BEe
+> > se celej view vlastn=EC psal z javascriptu, proto=BEe tam byly
+> > p=F8eddefinovan=FD v=B9echny pages, panes, buttons, widgets, atd. tak=
+=BEe ty
+> > appky pak vypadaly v=B9echny stejn=EC (hnusn=EC) a bylo to t=EC=BEkop=
+=E1dn=FD.
+>
+> >http://blog.sproutcore.com/announcing-sproutcore-2-0/
+
+
+From richte...@gmail.com  Thu Jan  2 16:12:09 2014
+Received: by 10.224.126.72 with SMTP id b8mr1923833qas.13.1306351509553;
+        Wed, 25 May 2011 12:25:09 -0700 (PDT)
+X-BeenThere: javascriptcz@googlegroups.com
+Received: by 10.224.181.131 with SMTP id by3ls169717qab.3.gmail; Wed, 25 May
+ 2011 12:25:08 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.224.203.8 with SMTP id fg8mr904907qab.54.1306351508426; Wed,
+ 25 May 2011 12:25:08 -0700 (PDT)
+Received: by n10g2000vby.googlegroups.com with HTTP; Wed, 25 May 2011 12:25:08
+ -0700 (PDT)
+Date: Wed, 25 May 2011 12:25:08 -0700 (PDT)
+User-Agent: G2/1.0
+X-HTTP-UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7)
+ AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.68 Safari/534.24,gzip(gfe)
+Message-ID: <32a62e7b-28f6-4b99-920a-eba49518b9a4@n10g2000vby.googlegroups.com>
+Subject: =?ISO-8859-1?Q?IRC_kan=E1l?=
+From: Josef Richter <richter.josef@gmail.com>
+To: "javascript.cz" <javascriptcz@googlegroups.com>
+Content-Type: text/plain; charset=ISO-8859-1
+
+
+#javascript.cz na irc.freenode.net
+
+
+From richte...@gmail.com  Thu Jan  2 16:12:10 2014
+Received: by 10.224.215.3 with SMTP id hc3mr1823425qab.4.1306325120198;
+        Wed, 25 May 2011 05:05:20 -0700 (PDT)
+X-BeenThere: javascriptcz@googlegroups.com
+Received: by 10.224.138.148 with SMTP id a20ls76694qau.5.gmail; Wed, 25 May
+ 2011 05:05:20 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 10.224.217.200 with SMTP id hn8mr722125qab.0.1306325120116; Wed,
+ 25 May 2011 05:05:20 -0700 (PDT)
+Received: by 32g2000vbe.googlegroups.com with HTTP; Wed, 25 May 2011 05:05:20
+ -0700 (PDT)
+Date: Wed, 25 May 2011 05:05:20 -0700 (PDT)
+User-Agent: G2/1.0
+X-HTTP-UserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_7)
+ AppleWebKit/534.24 (KHTML, like Gecko) Chrome/11.0.696.68 Safari/534.24,gzip(gfe)
+Message-ID: <df869047-365d-40da-8641-8c74d1ae2090@32g2000vbe.googlegroups.com>
+Subject: =?ISO-8859-2?Q?=C8lenov=E9?=
+From: Josef Richter <richter.josef@gmail.com>
+To: "javascript.cz" <javascriptcz@googlegroups.com>
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: quoted-printable
+
+
+bylo by fajn kdyby ka=BEd=FD =E8len napsal krati=E8k=E9 info o sob=EC
+
+vykop=E1v=E1m:
+
+jsem web designer a front-end developer, d=ECl=E1m hlavn=EC jednodu=B9=B9=
+=ED v=ECci
+v jQuery, ale jak se st=E1vaj=ED slo=BEit=ECj=B9=EDmi, tak se sna=BE=EDm pr=
+oniknout do
+Backbone.js, SproutCore, apod. Experimentuju i s jQuery Mobile a
+mobiln=EDm aplikacemi v=F9bec. Slu=B9n=EC se orientuju v Ruby on Rails a ve=
+du
+mal=FD developersk=FD team, zam=EC=F8en=FD na agiln=ED development webov=FD=
+ch
+aplikac=ED.
+
+

@@ -52,5 +52,16 @@ class TestMBOX(unittest.TestCase):
         self.assertEqual(exp_str, mang_addres)
 
 
+class TestDemangle(unittest.TestCase):
+    def test_demangle(self):
+        self.maxDiff = None
+        gg_scrapper.demangle('test/unmangled_address.cnf',
+                             'test/mbox.mbx', 'unmangled.mbx')
+
+        with open('unmangled.mbx') as obs_mbx_f:
+            with open('test/mbox_unmangled.mbx') as exp_mbx_f:
+                self.assertAlmostEqual(len(obs_mbx_f.read()),
+                                       len(exp_mbx_f.read()))
+
 if __name__ == '__main__':
     unittest.main()

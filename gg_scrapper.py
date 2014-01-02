@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 
+import argparse
 from configparser import ConfigParser
 import mailbox
 import os.path
 import re
 import shutil
 import subprocess
-import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -15,6 +15,11 @@ from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
                     level=logging.DEBUG)
+
+ADDR_SEC_LABEL = 'addresses'
+MANGLED_ADDR_RE = re.compile(
+    r'([a-zA-Z0-9_.+-]+\.\.\.@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
+    re.IGNORECASE)
 
 
 class Page(object):
@@ -120,6 +125,7 @@ class Group(Page):
         super(Group, self).__init__()
         self.group_URL = URL
         self.topics = []
+        logging.debug('URL = {}'.format(URL))
         match = re.match(r'https://groups.google.com/forum/#!forum/(.+)',
                          URL)
         if match is not None:
@@ -192,14 +198,11 @@ class Group(Page):
 
     def collect_mangled_addrs(self):
         addrs = set()
-        addr_sec_label = 'addresses'
         for top in self.topics:
             for art in top.articles:
                 msg_str = art.raw_message
                 # see http://stackoverflow.com/questions/201323
-                msg_matches = re.findall(
-                    r'([a-zA-Z0-9_.+-]+\.\.\.@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
-                    msg_str, re.IGNORECASE)
+                msg_matches = MANGLED_ADDR_RE.findall(msg_str)
                 if msg_matches is not None:
                     for mtch in msg_matches:
                         addrs.add(mtch)
@@ -208,9 +211,9 @@ class Group(Page):
 
         with open('{}.cnf'.format(self.name), 'w') as cnf_f:
             cnf_p = ConfigParser()
-            cnf_p.add_section(addr_sec_label)
+            cnf_p.add_section(ADDR_SEC_LABEL)
             for addr in addrs:
-                cnf_p.set(addr_sec_label, addr, '')
+                cnf_p.set(ADDR_SEC_LABEL, addr, '')
             cnf_p.write(cnf_f)
 
 
@@ -234,10 +237,10 @@ def main(group_URL):
     grp = Group(group_URL)
     grp.collect_group()
 
-    import yaml
+    #import yaml
     # dump the state for debugging
-    with open('group.yaml', 'w') as yf:
-        yaml.dump(grp, yf)
+    #with open('group.yaml', 'w') as yf:
+    #    yaml.dump(grp, yf)
 
     # Write MBOX
     mbx = MBOX("{}.mbx".format(grp.name))
@@ -246,5 +249,49 @@ def main(group_URL):
     # generate list of addresses protected against spammers
     grp.collect_mangled_addrs()
 
+
+def demangle(correct_list, orig_mbx, out_mbx):
+    cnf_p = ConfigParser()
+    cnf_p.read(correct_list)
+    pairs = dict(cnf_p.items(ADDR_SEC_LABEL))
+    logging.debug('pairs = {}'.format(pairs))
+
+    if os.path.exists(out_mbx):
+        shutil.move(out_mbx, '{}.bak'.format(out_mbx))
+
+    in_mbx = mailbox.mbox(orig_mbx)
+    out_mbx = mailbox.mbox(out_mbx)
+
+    out_mbx.lock()
+    for msg in in_mbx.itervalues():
+        msg_str = str(msg)
+        matches = MANGLED_ADDR_RE.search(msg_str)
+        if matches is not None:
+            u_from = msg.get_from()
+            for orig, fixed in pairs.items():
+                msg_str = msg_str.replace(orig, fixed)
+            out_msg = mailbox.mboxMessage(msg_str)
+            out_msg.set_from(u_from)
+
+            out_mbx.add(out_msg)
+        else:
+            out_mbx.add(msg)
+    out_mbx.close()
+    in_mbx.close()
+
+
 if __name__ == '__main__':
-    main(sys.argv[1])
+    parser = argparse.ArgumentParser(description=
+                                     'Scrape a Google Groups group.')
+    parser.add_argument('group', metavar='URL', nargs='?',
+                        help='URL of the group')
+    parser.add_argument('-d', '--demangle', metavar='DEMANGLE_FILE', nargs=3,
+                        help='Demangle mbox from stdin to stdout' +
+                        'according to the values in the configuration' +
+                        'file.')
+    args = parser.parse_args()
+
+    if args.demangle is not None:
+        demangle(args.demangle[0], args.demangle[1], args.demangle[2])
+    else:
+        main(args.group[0])
