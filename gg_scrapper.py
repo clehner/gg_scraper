@@ -7,6 +7,7 @@ import os.path
 import re
 import shutil
 import subprocess
+import sys
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -14,7 +15,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 ADDR_SEC_LABEL = 'addresses'
 MANGLED_ADDR_RE = re.compile(
@@ -40,7 +41,6 @@ class Page(object):
         """
         if old_URL.find('#!') != -1:
             esc_URL = old_URL.replace('#!', '?_escaped_fragment_=')
-            logging.debug('esc_URL = {}'.format(esc_URL))
             return esc_URL
         else:
             return old_URL
@@ -51,7 +51,6 @@ class Page(object):
 
         if res.getcode() == 200:
             new_URL = res.geturl()
-            logging.debug('url = {}'.format(new_URL))
             return cls.unenscape_Google_bang_URL(new_URL)
         else:
             raise urllib.error.HTTPError('Unknown URL: {}'.format(URL))
@@ -125,7 +124,6 @@ class Group(Page):
         super(Group, self).__init__()
         self.group_URL = URL
         self.topics = []
-        logging.debug('URL = {}'.format(URL))
         match = re.match(r'https://groups.google.com/forum/#!forum/(.+)',
                          URL)
         if match is not None:
@@ -148,10 +146,10 @@ class Group(Page):
 
     @staticmethod
     def get_one_topic(elem):
+        sys.stdout.write('. ')
+        sys.stdout.flush()
         if 'title' in elem.attrs:
             # filter out all-non-topic <a>s
-            logging.debug('href = %s', elem['href'])
-            logging.debug('title = %s', elem['title'])
             return True, Topic(elem['href'], elem['title'])
         else:
             logging.debug('other = %s', elem)
@@ -179,11 +177,16 @@ class Group(Page):
             raise ValueError(
                 'There must be either one or none link to the next page!')
 
+        sys.stdout.write('\n')
+        sys.stdout.flush()
         return out
 
     def collect_group(self):
         self.topics = self.get_topics()
+        len_topics = len(self.topics)
         for top in self.topics:
+            print('[%d/%d] downloading "%s"' % (self.topics.index(top),
+                  len_topics, top.name))
             arts = top.get_articles()
             top.articles = arts
             for a in arts:
@@ -254,7 +257,6 @@ def demangle(correct_list, orig_mbx, out_mbx):
     cnf_p = ConfigParser()
     cnf_p.read(correct_list)
     pairs = dict(cnf_p.items(ADDR_SEC_LABEL))
-    logging.debug('pairs = {}'.format(pairs))
 
     if os.path.exists(out_mbx):
         shutil.move(out_mbx, '{}.bak'.format(out_mbx))
@@ -291,7 +293,9 @@ if __name__ == '__main__':
                         'file.')
     args = parser.parse_args()
 
+    logging.debug('args = {}'.format(args))
+
     if args.demangle is not None:
         demangle(args.demangle[0], args.demangle[1], args.demangle[2])
     else:
-        main(args.group[0])
+        main(args.group)
