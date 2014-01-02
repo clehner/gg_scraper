@@ -1,6 +1,9 @@
-import pickle
+import os
+import tempfile
+import yaml
 import unittest
 import gg_scrapper
+from gg_scrapper import Group, Topic, Article  # noqa
 
 IN_URL = 'https://groups.google.com/forum/#!forum/jbrout'
 ORIG_URL = 'http://groups.google.com/d/forum/jbrout'
@@ -22,15 +25,19 @@ class TestMBOX(unittest.TestCase):
     def test_create_mbox(self):
         '''Create a mbox file from (pickled) Group
         '''
-        group_file_name = 'test/group.pickle'
-        with open(group_file_name, 'r', encoding='utf8') as group_f:
-            group = pickle.load(group_f)
+        group_file_name = 'test/group.yaml'
+        with open(group_file_name, 'r') as group_f:
+            group = yaml.load(group_f)
 
-        mbx = gg_scrapper.MBOX()
-        mbx.format_mbox(group)
+        mbx_file = tempfile.NamedTemporaryFile('w', delete=False)
+        mbx = gg_scrapper.MBOX(mbx_file.name)
+        mbx.write_group(group)
 
-        with open('test/generated_mbox.mbx') as exp_f:
-            self.assertEqual(exp_f.read(), mbx.mbox_string)
+        with open('test/mbox.mbx') as exp_f:
+            with open(mbx_file.name) as mbx_f:
+                self.assertEqual(exp_f.read(), mbx_f.read())
+
+        os.unlink(mbx_file.name)
 
 if __name__ == '__main__':
     unittest.main()

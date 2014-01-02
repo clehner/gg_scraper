@@ -10,7 +10,7 @@ ORIG_URL = 'http://groups.google.com/d/forum/jbrout'
 EXP_URL = 'https://groups.google.com/forum/' + \
     '?_escaped_fragment_=forum/jbrout'
 TOPIC_URL = 'https://groups.google.com/forum/#!topic/jbrout/xNwoVmC07KI'
-ARTICLE_URL = 'https://groups.google.com/forum/#!msg/jbrout' + \
+ARTICLE_URL = 'https://groups.google.com/d/msg/jbrout' + \
     '/xNwoVmC07KI/OfpRHFscUkwJ'
 
 
@@ -34,9 +34,7 @@ class TestGGScrapperFunctional(unittest.TestCase):
 
     def test_get_raw_article(self):
         self.maxDiff = None
-        logging.debug('article = URL {}'.format(ARTICLE_URL))
         article = gg_scrapper.Article(ARTICLE_URL)
-        logging.debug('article = raw URL {}'.format(article.root))
 
         rfc_msg = article.collect_message().replace('\r\n', '\n')
         rfc_msg = '\n'.join(rfc_msg.split('\n')[1:])

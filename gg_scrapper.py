@@ -1,20 +1,19 @@
 #!/usr/bin/python3
 
 import mailbox
+import os.path
 import re
+import shutil
 import subprocess
-import urllib.request
+import sys
 import urllib.error
 import urllib.parse
+import urllib.request
 #from concurrent.futures import ProcessPoolExecutor
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
                     level=logging.DEBUG)
-
-TOPIC_COUNT_RE = re.compile(r'\D+ \d+ - \d+ \D+ (\d+) \D+$')
-ARTICL_MSG_URL_RE = re.compile(r'https://groups.google.com/d/msg/')
-ARTICLE_COUNT_RE = re.compile(r'\D+ \d+\D+\d+ \D+ (\d+) \D+$')
 
 
 class Page(object):
@@ -62,7 +61,7 @@ class Page(object):
 class Article(Page):
     def __init__(self, URL):
         super(Article, self).__init__()
-        self.root = URL.replace('#!msg/', 'message/raw?msg=')
+        self.root = URL.replace('d/msg/', 'forum/message/raw?msg=')
         self.raw_message = ''
 
     def collect_message(self):
@@ -70,9 +69,10 @@ class Article(Page):
             raw_msg = res.read()
             proc = subprocess.Popen(['/usr/bin/formail'],
                                     stdin=subprocess.PIPE,
-                                    stdout=subprocess.PIPE)
-            result = proc.communicate(raw_msg)[0]
-            return result.decode()
+                                    stdout=subprocess.PIPE,
+                                    universal_newlines=True)
+            result = proc.communicate(raw_msg.decode())[0]
+            return result
 
 
 class Topic(Page):
@@ -99,9 +99,7 @@ class Topic(Page):
             raise ValueError('Cannot find count of topics!')
 
         i_str = i_elem[0].string
-        logging.debug('i_str = {}'.format(i_str))
-        logging.debug('RE = {}'.format(ARTICLE_COUNT_RE.pattern))
-        return int(ARTICLE_COUNT_RE.match(i_str).group(1))
+        return int(re.match(r'\D+ \d+\D+\d+ \D+ (\d+) \D+$', i_str).group(1))
 
     def get_articles(self):
         out = []
@@ -109,8 +107,8 @@ class Topic(Page):
         for a_elem in page.find_all('a'):
             if 'href' in a_elem.attrs:
                 a_href = a_elem['href']
-                if ARTICL_MSG_URL_RE.match(a_href) is not None:
-                    logging.debug('a_elem = %s', a_href)
+                if re.match(r'https://groups.google.com/d/msg/',
+                            a_href) is not None:
                     out.append(Article(a_href))
 
         return out
@@ -120,6 +118,11 @@ class Group(Page):
     def __init__(self, URL):
         super(Group, self).__init__()
         self.group_URL = URL
+        self.topics = []
+        match = re.match(r'https://groups.google.com/forum/#!forum/(.+)',
+                         URL)
+        if match is not None:
+            self.name = match.group(1)
 
     @staticmethod
     def get_count_topics(BS):
@@ -134,7 +137,7 @@ class Group(Page):
             raise ValueError('Cannot find count of topics!')
 
         i_str = i_elem[0].string
-        return int(TOPIC_COUNT_RE.match(i_str).group(1))
+        return int(re.match(r'\D+ \d+ - \d+ \D+ (\d+) \D+$', i_str).group(1))
 
     @staticmethod
     def get_one_topic(elem):
@@ -172,30 +175,49 @@ class Group(Page):
         return out
 
     def collect_group(self):
-        topics = self.get_topics()
-        for top in topics:
+        self.topics = self.get_topics()
+        for top in self.topics:
             arts = top.get_articles()
             top.articles = arts
             for a in arts:
                 msg = a.collect_message()
                 a.raw_message = msg
 
+    def all_messages(self):
+        '''Iterate over all messages in the group'''
+        for top in self.topics:
+            for art in top.articles:
+                yield art.raw_message
+
 
 class MBOX(mailbox.mbox):
     def __init__(self, filename):
-        super(MBOX, self).__init__()
+        if os.path.exists(filename):
+            shutil.move(filename, '{}.bak'.format(filename))
+        super(MBOX, self).__init__(filename)
         self.box_name = filename
 
     def write_group(self, group_object):
-        pass
+        self.lock()
+        for mbx_str in group_object.all_messages():
+            self.add(mbx_str.encode())
+        self.unlock()
+        self.close()
 
 
-def main(group_name, group_URL):
+def main(group_URL):
     # Collect all messages to the internal variables
     grp = Group(group_URL)
     grp.collect_group()
 
+    import yaml
+    # dump the state for debugging
+    with open('group.yaml', 'w') as yf:
+        yaml.dump(grp, yf)
+
     # Write MBOX
-    mbx = MBOX()
-    mbx.format_mbox(grp)
-    mbx.save("{}.mbx".format(group_name))
+    mbx = MBOX("{}.mbx".format(grp.name))
+    mbx.write_group(grp)
+
+if __name__ == '__main__':
+    main(sys.argv[1])
