@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from configparser import ConfigParser
 import mailbox
 import os.path
 import re
@@ -189,6 +190,29 @@ class Group(Page):
             for art in top.articles:
                 yield art.raw_message
 
+    def collect_mangled_addrs(self):
+        addrs = set()
+        addr_sec_label = 'addresses'
+        for top in self.topics:
+            for art in top.articles:
+                msg_str = art.raw_message
+                # see http://stackoverflow.com/questions/201323
+                msg_matches = re.findall(
+                    r'([a-zA-Z0-9_.+-]+\.\.\.@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
+                    msg_str, re.IGNORECASE)
+                if msg_matches is not None:
+                    for mtch in msg_matches:
+                        addrs.add(mtch)
+
+        addrs = sorted(list(addrs))
+
+        with open('{}.cnf'.format(self.name), 'w') as cnf_f:
+            cnf_p = ConfigParser()
+            cnf_p.add_section(addr_sec_label)
+            for addr in addrs:
+                cnf_p.set(addr_sec_label, addr, '')
+            cnf_p.write(cnf_f)
+
 
 class MBOX(mailbox.mbox):
     def __init__(self, filename):
@@ -218,6 +242,9 @@ def main(group_URL):
     # Write MBOX
     mbx = MBOX("{}.mbx".format(grp.name))
     mbx.write_group(grp)
+
+    # generate list of addresses protected against spammers
+    grp.collect_mangled_addrs()
 
 if __name__ == '__main__':
     main(sys.argv[1])
