@@ -15,7 +15,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 
 ADDR_SEC_LABEL = 'addresses'
 MANGLED_ADDR_RE = re.compile(
@@ -70,14 +70,19 @@ class Article(Page):
         self.raw_message = ''
 
     def collect_message(self):
-        with self.opener.open(self.root) as res:
-            raw_msg = res.read()
-            proc = subprocess.Popen(['/usr/bin/formail'],
-                                    stdin=subprocess.PIPE,
-                                    stdout=subprocess.PIPE,
-                                    universal_newlines=True)
-            result = proc.communicate(raw_msg.decode())[0]
-            return result
+        logging.debug('self.root = {}'.format(self.root))
+        try:
+            with self.opener.open(self.root) as res:
+                raw_msg = res.read()
+                proc = subprocess.Popen(['/usr/bin/formail'],
+                                        stdin=subprocess.PIPE,
+                                        stdout=subprocess.PIPE,
+                                        universal_newlines=True)
+                result = proc.communicate(raw_msg.decode())[0]
+                return result
+        except urllib.error.HTTPError as exc:
+            logging.warning('Exception on downloading {}:\n{}'.format(
+                self.root, exc))
 
 
 class Topic(Page):
@@ -191,7 +196,8 @@ class Group(Page):
             top.articles = arts
             for a in arts:
                 msg = a.collect_message()
-                a.raw_message = msg
+                if msg is not None:
+                    a.raw_message = msg
 
     def all_messages(self):
         '''Iterate over all messages in the group'''
