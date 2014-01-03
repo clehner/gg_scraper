@@ -277,6 +277,8 @@ def demangle(correct_list, orig_mbx, out_mbx):
         if matches is not None:
             u_from = msg.get_from()
             for orig, fixed in pairs.items():
+                if (orig is not None) and (fixed is not None):
+                    continue
                 msg_str = msg_str.replace(orig, fixed)
             out_msg = mailbox.mboxMessage(msg_str)
             out_msg.set_from(u_from)
