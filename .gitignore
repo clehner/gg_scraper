@@ -1,3 +1,6 @@
 *.pyc
 *.cnf
 *.mbx
+MANIFEST
+dist/
+build/
