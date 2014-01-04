@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 """
 Download a Google Group to MBOX
 Copyright (C) 2014 Matěj Cepl
@@ -16,18 +17,26 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program.  If not, see <http://www.gnu.org/licenses/>.'
 """
+from __future__ import absolute_import, print_function, unicode_literals
 
 import argparse
-from configparser import ConfigParser
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import ConfigParser
 import mailbox
 import os.path
 import re
 import shutil
 import subprocess
 import sys
-import urllib.error
-import urllib.parse
-import urllib.request
+try:
+    from urllib.error import HTTPError
+    from urllib.request import HTTPHandler, HTTPRedirectHandler, \
+        build_opener
+except ImportError:
+    from urllib2 import (HTTPError, HTTPHandler, HTTPRedirectHandler,
+                         build_opener)
 #from concurrent.futures import ProcessPoolExecutor
 from bs4 import BeautifulSoup
 import logging
@@ -43,11 +52,11 @@ __version__ = '0.3'
 
 
 class Page(object):
-    verb_handler = urllib.request.HTTPHandler()
+    verb_handler = HTTPHandler()
     if logging.getLogger().getEffectiveLevel() == logging.DEBUG:
         verb_handler.set_http_debuglevel(2)
-    redir_handler = urllib.request.HTTPRedirectHandler()
-    opener = urllib.request.build_opener(verb_handler, redir_handler)
+    redir_handler = HTTPRedirectHandler()
+    opener = build_opener(verb_handler, redir_handler)
 
     def __init__(self):
         pass
@@ -72,7 +81,7 @@ class Page(object):
             new_URL = res.geturl()
             return cls.unenscape_Google_bang_URL(new_URL)
         else:
-            raise urllib.error.HTTPError('Unknown URL: {}'.format(URL))
+            raise HTTPError('Unknown URL: {}'.format(URL))
 
     def _get_page_BS(self, URL):
         res = self.opener.open(self.do_redirect(URL))
@@ -91,17 +100,20 @@ class Article(Page):
     def collect_message(self):
         logging.debug('self.root = {}'.format(self.root))
         try:
-            with self.opener.open(self.root) as res:
-                raw_msg = res.read()
-                proc = subprocess.Popen(['/usr/bin/formail'],
-                                        stdin=subprocess.PIPE,
-                                        stdout=subprocess.PIPE,
-                                        universal_newlines=True)
-                result = proc.communicate(raw_msg.decode())[0]
-                return result
-        except urllib.error.HTTPError as exc:
+            res = self.opener.open(self.root)
+            raw_msg = res.read()
+            proc = subprocess.Popen(['/usr/bin/formail'],
+                                    stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE,
+                                    universal_newlines=True)
+            result = proc.communicate(raw_msg.decode())[0]
+        except HTTPError as exc:
             logging.warning('Exception on downloading {}:\n{}'.format(
                 self.root, exc))
+        finally:
+            res.close()
+
+        return result
 
 
 class Topic(Page):
@@ -248,8 +260,8 @@ class Group(Page):
 class MBOX(mailbox.mbox):
     def __init__(self, filename):
         if os.path.exists(filename):
-            shutil.move(filename, '{}.bak'.format(filename))
-        super(MBOX, self).__init__(filename)
+            shutil.move(filename, '{0}.bak'.format(filename))
+        mailbox.mbox.__init__(self, filename)
         self.box_name = filename
 
     def write_group(self, group_object):

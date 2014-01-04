@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import io
 import os.path
 import unittest
 import gg_scrapper
@@ -40,7 +41,7 @@ class TestGGScrapperFunctional(unittest.TestCase):
         rfc_msg = '\n'.join(rfc_msg.split('\n')[1:])
 
         exp_file_name = os.path.join(os.path.dirname(__file__), 'message.eml')
-        with open(exp_file_name, 'r', encoding='utf8') as exp_f:
+        with io.open(exp_file_name, 'r', encoding='utf8') as exp_f:
             self.assertEqual(rfc_msg, exp_f.read())
 
 

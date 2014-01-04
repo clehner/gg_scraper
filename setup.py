@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import, print_function, unicode_literals
 from distutils.core import setup, Command
 import unittest
 
@@ -51,4 +53,5 @@ setup(name='gg_scrapper',
       classifiers=classifiers,
       cmdclass={
           'test': RunTests,
-      })
+      },
+      requires=['beautifulsoup4', 'PyYAML'])

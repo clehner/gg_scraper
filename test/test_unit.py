@@ -61,7 +61,8 @@ class TestDemangle(unittest.TestCase):
         with open('unmangled.mbx') as obs_mbx_f:
             with open('test/mbox_unmangled.mbx') as exp_mbx_f:
                 self.assertAlmostEqual(len(obs_mbx_f.read()),
-                                       len(exp_mbx_f.read()))
+                                       len(exp_mbx_f.read()),
+                                       delta=100)
 
 if __name__ == '__main__':
     unittest.main()
