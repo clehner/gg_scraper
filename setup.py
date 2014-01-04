@@ -31,6 +31,7 @@ classifiers = [
     'Intended Audience :: Information Technology',
     'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
     'Natural Language :: English',
+    'Programming Language :: Python :: 2',
     'Programming Language :: Python :: 3',
     'Topic :: Communications :: Email',
     'Topic :: Communications :: Conferencing']
