@@ -41,7 +41,7 @@ except ImportError:
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 ADDR_SEC_LABEL = 'addresses'
 MANGLED_ADDR_RE = re.compile(

@@ -1,10 +1,9 @@
 language: python
 python:
-  - "2.6"
   - "2.7"
   - "pypy"
   - "3.2"
   - "3.3"
 before_script:
-  - "pip install --use-mirrors ."
-script: PYTHONPATH=$PYTHONPATH:. python test/test_html2text.py -v
+  - "pip install --use-mirrors beautifulsoup4 PyYAML"
+script: python setup.py test
