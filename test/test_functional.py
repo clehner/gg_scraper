@@ -4,7 +4,7 @@ import logging
 import io
 import os.path
 import unittest
-import gg_scrapper
+import gg_scraper
 
 IN_URL = 'https://groups.google.com/forum/#!forum/jbrout'
 ORIG_URL = 'http://groups.google.com/d/forum/jbrout'
@@ -17,16 +17,16 @@ ARTICLE_URL = 'https://groups.google.com/d/msg/jbrout' + \
 
 class TestGGScrapperFunctional(unittest.TestCase):
     def test_collecting_topics(self):
-        page = gg_scrapper.Group(IN_URL)
+        page = gg_scraper.Group(IN_URL)
         topics = page.get_topics()
         logging.debug("number of topics = %d", len(topics))
         self.assertGreater(len(topics), 0)
 
     def test_collecting_articles(self):
         logging.debug('topic = URL {}'.format(TOPIC_URL))
-        topic = gg_scrapper.Topic(TOPIC_URL,
-                                  'repo version incompatible with ' +
-                                  'ubuntu 11.04 ?')
+        topic = gg_scraper.Topic(TOPIC_URL,
+                                 'repo version incompatible with ' +
+                                 'ubuntu 11.04 ?')
         articles = topic.get_articles()
         article_count = topic.get_count_articles()
         logging.debug('article_count = {0:d}'.format(article_count))
@@ -35,7 +35,7 @@ class TestGGScrapperFunctional(unittest.TestCase):
 
     def test_get_raw_article(self):
         self.maxDiff = None
-        article = gg_scrapper.Article(ARTICLE_URL)
+        article = gg_scraper.Article(ARTICLE_URL)
 
         rfc_msg = article.collect_message().replace('\r\n', '\n')
         rfc_msg = '\n'.join(rfc_msg.split('\n')[1:])

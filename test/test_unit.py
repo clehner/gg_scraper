@@ -2,8 +2,8 @@ import os
 import tempfile
 import yaml
 import unittest
-import gg_scrapper
-from gg_scrapper import Group, Topic, Article  # noqa
+import gg_scraper
+from gg_scraper import Group, Topic, Article  # noqa
 
 IN_URL = 'https://groups.google.com/forum/#!forum/jbrout'
 ORIG_URL = 'http://groups.google.com/d/forum/jbrout'
@@ -13,11 +13,11 @@ EXP_URL = 'https://groups.google.com/forum/' + \
 
 class TestGGScrapper(unittest.TestCase):
     def test_URL_conversion(self):
-        obs_URL = gg_scrapper.Group.unenscape_Google_bang_URL(IN_URL)
+        obs_URL = gg_scraper.Group.unenscape_Google_bang_URL(IN_URL)
         self.assertEqual(obs_URL, EXP_URL)
 
     def test_do_redirect(self):
-        obs_URL = gg_scrapper.Group.do_redirect(ORIG_URL)
+        obs_URL = gg_scraper.Group.do_redirect(ORIG_URL)
         self.assertEqual(obs_URL, EXP_URL)
 
 
@@ -31,7 +31,7 @@ class TestMBOX(unittest.TestCase):
         '''Create a mbox file from (YAMLed) Group
         '''
         mbx_file = tempfile.NamedTemporaryFile('w', delete=False)
-        mbx = gg_scrapper.MBOX(mbx_file.name)
+        mbx = gg_scraper.MBOX(mbx_file.name)
         mbx.write_group(self.group)
 
         with open('test/mbox.mbx') as exp_f:
@@ -55,8 +55,8 @@ class TestMBOX(unittest.TestCase):
 class TestDemangle(unittest.TestCase):
     def test_demangle(self):
         self.maxDiff = None
-        gg_scrapper.demangle('test/unmangled_address.cnf',
-                             'test/mbox.mbx', 'unmangled.mbx')
+        gg_scraper.demangle('test/unmangled_address.cnf',
+                            'test/mbox.mbx', 'unmangled.mbx')
 
         with open('unmangled.mbx') as obs_mbx_f:
             with open('test/mbox_unmangled.mbx') as exp_mbx_f:
