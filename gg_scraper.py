@@ -20,6 +20,8 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.'
 from __future__ import absolute_import, print_function, unicode_literals
 
 import argparse
+from collections import OrderedDict
+import operator
 try:
     from configparser import ConfigParser
 except ImportError:
@@ -237,7 +239,7 @@ class Group(Page):
                 yield art.raw_message
 
     def collect_mangled_addrs(self):
-        addrs = set()
+        addrs = {}
         for top in self.topics:
             for art in top.articles:
                 msg_str = art.raw_message
@@ -245,9 +247,14 @@ class Group(Page):
                 msg_matches = MANGLED_ADDR_RE.findall(msg_str)
                 if msg_matches is not None:
                     for mtch in msg_matches:
-                        addrs.add(mtch)
+                        if mtch in addrs:
+                            addrs[mtch] += 1
+                        else:
+                            addrs[mtch] = 1
 
-        addrs = sorted(list(addrs))
+        addrs = OrderedDict(sorted(addrs.items(),
+                                   key=operator.itemgetter(1),
+                                   reverse=True))
 
         with open('{}.cnf'.format(self.name), 'w') as cnf_f:
             cnf_p = ConfigParser()
