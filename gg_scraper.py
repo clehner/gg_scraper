@@ -199,21 +199,23 @@ class Group(Page):
         of the topic page.
         '''
         out = []
-        other = []
-        BS = self._get_page_BS(self.group_URL)
-        for a_elem in BS.find_all('a'):
-            is_topic, res = self.get_one_topic(a_elem)
-            if is_topic:
-                out.append(res)
-            else:
-                other.append(res)
+        target_stack = [self.group_URL]
 
-        if len(other) == 1:
-            new_bs = Group(other[0]['href'])
-            out.extend(new_bs.get_topics())
-        elif len(other) != 0:
-            raise ValueError(
-                'There must be either one or none link to the next page!')
+        while target_stack:
+            other = []
+            BS = self._get_page_BS(target_stack.pop(0))
+            for a_elem in BS.find_all('a'):
+                is_topic, res = self.get_one_topic(a_elem)
+                if is_topic:
+                    out.append(res)
+                else:
+                    other.append(res)
+
+            if len(other) == 1:
+                target_stack.append(other[0]['href'])
+            elif len(other) != 0:
+                raise ValueError(
+                    'There must be either one or none link to the next page!')
 
         sys.stdout.write('\n')
         sys.stdout.flush()
