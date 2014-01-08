@@ -43,13 +43,18 @@ try:
 except ImportError:
     from urllib2 import (HTTPError, HTTPHandler, HTTPRedirectHandler,
                          build_opener)
-#from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
+try:
+    from queue import Queue
+except ImportError:
+    from Queue import Queue
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
                     level=logging.DEBUG)
 
 ADDR_SEC_LABEL = 'addresses'
+MAX_THREADS = 42
 MANGLED_ADDR_RE = re.compile(
     r'([a-zA-Z0-9_.+-]+\.\.\.@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
     re.IGNORECASE)
@@ -235,16 +240,29 @@ class Group(Page):
     def collect_group(self):
         self.topics = self.get_topics()
         len_topics = len(self.topics)
-        for top in self.topics:
-            #print('[%d/%d] downloading "%s"' % (self.topics.index(top),
-            #      len_topics, top.name))
-            print('[%d/%d] downloading' % (self.topics.index(top), len_topics))
-            arts = top.get_articles()
-            top.articles = arts
-            for a in arts:
-                msg = a.collect_message()
-                if msg is not None:
-                    a.raw_message = msg
+        jobs = []
+        with ThreadPoolExecutor(MAX_THREADS) as executor:
+            for top in self.topics:
+                #print('[%d/%d] downloading "%s"' % (self.topics.index(top),
+                #      len_topics, top.name))
+                print('[%d/%d] downloading' % (self.topics.index(top), len_topics))
+                job = executor.submit(top.get_articles)
+                jobs.append(job)
+
+            for job in as_completed(jobs):
+                arts = job.result()
+                top.articles = arts
+                msg_jobs = {}
+
+                for a_job in arts:
+                    m_job = executor.submit(a_job.collect_message)
+                    msg_jobs[m_job] = a_job
+
+                for m_job in as_completed(msg_jobs):
+                    a_job = msg_jobs[m_job]
+                    msg = m_job.result()
+                    if msg is not None:
+                        a_job.raw_message = msg
 
     def all_messages(self):
         '''Iterate over all messages in the group'''
