@@ -138,7 +138,8 @@ class Topic(Page):
     def __init__(self, URL, name):
         super(Topic, self).__init__()
         self.name = name
-        self.root = self.unenscape_Google_bang_URL(URL)
+        root_URL = self.unenscape_Google_bang_URL(URL)
+        self.root = root_URL
         self.articles = []
 
     def __unicode__(self):
@@ -202,6 +203,7 @@ class Group(Page):
     def get_one_topic(elem):
         sys.stdout.write('. ')
         sys.stdout.flush()
+        #logging.debug('URL collected = {0}'.format(elem['href']))
         if 'title' in elem.attrs:
             # filter out all-non-topic <a>s
             return True, Topic(elem['href'], elem['title'])
