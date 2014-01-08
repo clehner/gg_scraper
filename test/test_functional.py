@@ -3,7 +3,10 @@
 import logging
 import io
 import os.path
-import unittest
+try:
+	import unittest2 as unittest
+except ImportError:
+	import unittest
 import gg_scraper
 
 IN_URL = 'https://groups.google.com/forum/#!forum/jbrout'
@@ -23,7 +26,7 @@ class TestGGScrapperFunctional(unittest.TestCase):
         self.assertGreater(len(topics), 0)
 
     def test_collecting_articles(self):
-        logging.debug('topic = URL {}'.format(TOPIC_URL))
+        logging.debug('topic = URL {0}'.format(TOPIC_URL))
         topic = gg_scraper.Topic(TOPIC_URL,
                                  'repo version incompatible with ' +
                                  'ubuntu 11.04 ?')

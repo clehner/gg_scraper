@@ -1,7 +1,11 @@
 import os
 import tempfile
 import yaml
-import unittest
+import sys
+try:
+	import unittest2 as unittest
+except ImportError:
+	import unittest
 import gg_scraper
 from gg_scraper import Group, Topic, Article  # noqa
 
@@ -27,6 +31,7 @@ class TestMBOX(unittest.TestCase):
         with open(group_file_name, 'r') as group_f:
             self.group = yaml.load(group_f)
 
+    @unittest.skipIf(sys.version_info[:2] < (2, 7), 'Formatting on 2.6 is different')
     def test_create_mbox(self):
         '''Create a mbox file from (YAMLed) Group
         '''
@@ -47,7 +52,7 @@ class TestMBOX(unittest.TestCase):
 
         self.group.collect_mangled_addrs()
 
-        with open('{}.cnf'.format(self.group.name)) as obs_f:
+        with open('{0}.cnf'.format(self.group.name)) as obs_f:
             mang_addres = obs_f.read()
         self.assertEqual(exp_str, mang_addres)
 

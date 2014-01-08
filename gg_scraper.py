@@ -20,7 +20,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.'
 from __future__ import absolute_import, print_function, unicode_literals
 
 import argparse
-from collections import OrderedDict
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 import operator
 try:
     from configparser import ConfigParser
@@ -32,6 +35,7 @@ import re
 import shutil
 import subprocess
 import sys
+import yaml
 try:
     from urllib.error import HTTPError
     from urllib.request import HTTPHandler, HTTPRedirectHandler, \
@@ -43,7 +47,7 @@ except ImportError:
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 
 ADDR_SEC_LABEL = 'addresses'
 MANGLED_ADDR_RE = re.compile(
@@ -51,6 +55,11 @@ MANGLED_ADDR_RE = re.compile(
     re.IGNORECASE)
 
 __version__ = '0.5'
+
+if sys.version_info[:2] < (2, 7):
+    py26 = True
+else:
+    py26 = False
 
 
 class Page(object):
@@ -83,7 +92,7 @@ class Page(object):
             new_URL = res.geturl()
             return cls.unenscape_Google_bang_URL(new_URL)
         else:
-            raise HTTPError('Unknown URL: {}'.format(URL))
+            raise HTTPError('Unknown URL: {0}'.format(URL))
 
     def _get_page_BS(self, URL):
         res = self.opener.open(self.do_redirect(URL))
@@ -100,20 +109,23 @@ class Article(Page):
         self.raw_message = ''
 
     def collect_message(self):
-        logging.debug('self.root = {}'.format(self.root))
+        logging.debug('self.root = {0}'.format(self.root))
+        result = None
         try:
             res = self.opener.open(self.root)
-            raw_msg = res.read()
+            if not py26:
+                raw_msg = res.read().decode('utf8')
+            else:
+                raw_msg = res.read()
             proc = subprocess.Popen(['/usr/bin/formail'],
                                     stdin=subprocess.PIPE,
                                     stdout=subprocess.PIPE,
                                     universal_newlines=True)
-            result = proc.communicate(raw_msg.decode())[0]
-        except HTTPError as exc:
-            logging.warning('Exception on downloading {}:\n{}'.format(
-                self.root, exc))
-        finally:
+            result = proc.communicate(raw_msg)[0]
             res.close()
+        except HTTPError as exc:
+            logging.warning('Exception on downloading {0}:\n{1}'.format(
+                self.root, exc))
 
         return result
 
@@ -225,8 +237,9 @@ class Group(Page):
         self.topics = self.get_topics()
         len_topics = len(self.topics)
         for top in self.topics:
-            print('[%d/%d] downloading "%s"' % (self.topics.index(top),
-                  len_topics, top.name))
+            #print('[%d/%d] downloading "%s"' % (self.topics.index(top),
+            #      len_topics, top.name))
+            print('[%d/%d] downloading' % (self.topics.index(top), len_topics))
             arts = top.get_articles()
             top.articles = arts
             for a in arts:
@@ -258,8 +271,8 @@ class Group(Page):
                                    key=operator.itemgetter(1),
                                    reverse=True))
 
-        with open('{}.cnf'.format(self.name), 'w') as cnf_f:
-            cnf_p = ConfigParser()
+        with open('{0}.cnf'.format(self.name), 'w') as cnf_f:
+            cnf_p = ConfigParser(dict_type=OrderedDict)
             cnf_p.add_section(ADDR_SEC_LABEL)
             for addr in addrs:
                 cnf_p.set(ADDR_SEC_LABEL, addr, '')
@@ -273,26 +286,41 @@ class MBOX(mailbox.mbox):
         mailbox.mbox.__init__(self, filename)
         self.box_name = filename
 
+        lockfile = '{0}.lock'.format(filename)
+        if os.path.exists(lockfile):
+            os.unlink(lockfile)
+
     def write_group(self, group_object):
         self.lock()
         for mbx_str in group_object.all_messages():
-            self.add(mbx_str.encode())
+            try:
+                if not py26:
+                    self.add(mbx_str.encode())
+                else:
+                    self.add(mbx_str.encode('utf8'))
+            except UnicodeDecodeError:
+                logging.debug('mbx_str = type {0}'.format(type(mbx_str)))
         self.unlock()
         self.close()
 
 
 def main(group_URL):
     # Collect all messages to the internal variables
-    grp = Group(group_URL)
-    grp.collect_group()
+    if os.path.exists('group.yaml'):
+        with open('group.yaml') as yf:
+            logging.debug('Loading state from group.yaml')
+            grp = yaml.load(yf)
+            logging.debug('Done')
+    else:
+        grp = Group(group_URL)
+        grp.collect_group()
 
-    #import yaml
-    # dump the state for debugging
-    #with open('group.yaml', 'w') as yf:
-    #    yaml.dump(grp, yf)
+        # dump the state for debugging
+        with open('group.yaml', 'w') as yf:
+            yaml.dump(grp, yf)
 
     # Write MBOX
-    mbx = MBOX("{}.mbx".format(grp.name))
+    mbx = MBOX("{0}.mbx".format(grp.name))
     mbx.write_group(grp)
 
     # generate list of addresses protected against spammers
@@ -300,12 +328,12 @@ def main(group_URL):
 
 
 def demangle(correct_list, orig_mbx, out_mbx):
-    cnf_p = ConfigParser()
+    cnf_p = ConfigParser(dict_type=OrderedDict)
     cnf_p.read(correct_list)
     pairs = dict(cnf_p.items(ADDR_SEC_LABEL))
 
     if os.path.exists(out_mbx):
-        shutil.move(out_mbx, '{}.bak'.format(out_mbx))
+        shutil.move(out_mbx, '{0}.bak'.format(out_mbx))
 
     in_mbx = mailbox.mbox(orig_mbx)
     out_mbx = mailbox.mbox(out_mbx)
@@ -341,7 +369,7 @@ if __name__ == '__main__':
                         'file.')
     args = parser.parse_args()
 
-    logging.debug('args = {}'.format(args))
+    logging.debug('args = {0}'.format(args))
 
     if args.demangle is not None:
         demangle(args.demangle[0], args.demangle[1], args.demangle[2])
