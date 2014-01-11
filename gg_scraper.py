@@ -54,7 +54,7 @@ MANGLED_ADDR_RE = re.compile(
     r'([a-zA-Z0-9_.+-]+\.\.\.@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
     re.IGNORECASE)
 
-__version__ = '0.5'
+__version__ = '0.6'
 
 if sys.version_info[:2] < (2, 7):
     py26 = True
@@ -79,23 +79,22 @@ class Page(object):
                 /ajax-crawling/docs/getting-started for more information
         """
         if old_URL.find('#!') != -1:
-            esc_URL = old_URL.replace('#!', '?_escaped_fragment_=')
-            return esc_URL
+            return old_URL.replace('#!', '?_escaped_fragment_=')
+        elif old_URL.startswith('https://groups.google.com/d/topic/'):
+            # DEBUG:get_one_topic:URL collected =
+            #     https://groups.google.com/d/topic/jbrout/dreCkob3KSs
+            # DEBUG:__init__:root_URL =
+            #     https://groups.google.com/forum/\
+            #        ?_escaped_fragment_=topic/jbrout/dreCkob3KSs
+            return old_URL.replace(
+                'https://groups.google.com/d/',
+                'https://groups.google.com/forum/?_escaped_fragment_='
+            )
         else:
             return old_URL
 
-    @classmethod
-    def do_redirect(cls, URL):
-        res = cls.opener.open(URL)
-
-        if res.getcode() == 200:
-            new_URL = res.geturl()
-            return cls.unenscape_Google_bang_URL(new_URL)
-        else:
-            raise HTTPError('Unknown URL: {0}'.format(URL))
-
     def _get_page_BS(self, URL):
-        res = self.opener.open(self.do_redirect(URL))
+        res = self.opener.open(self.unenscape_Google_bang_URL(URL))
         in_str = res.read()
         bs = BeautifulSoup(in_str)
         res.close()
@@ -134,7 +133,7 @@ class Topic(Page):
     def __init__(self, URL, name):
         super(Topic, self).__init__()
         self.name = name
-        self.root = self.do_redirect(URL)
+        self.root = self.unenscape_Google_bang_URL(URL)
         self.articles = []
 
     def __unicode__(self):

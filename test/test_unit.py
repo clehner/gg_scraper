@@ -20,10 +20,6 @@ class TestGGScrapper(unittest.TestCase):
         obs_URL = gg_scraper.Group.unenscape_Google_bang_URL(IN_URL)
         self.assertEqual(obs_URL, EXP_URL)
 
-    def test_do_redirect(self):
-        obs_URL = gg_scraper.Group.do_redirect(ORIG_URL)
-        self.assertEqual(obs_URL, EXP_URL)
-
 
 class TestMBOX(unittest.TestCase):
     def setUp(self):
