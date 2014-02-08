@@ -220,9 +220,11 @@ class Group(Page):
             BS = self._get_page_BS(target_stack.pop(0))
             for a_elem in BS.find_all('a'):
                 is_topic, res = self.get_one_topic(a_elem)
+                # Ignore link in welcome message, e.g. django-oscar group
+                is_welcomemsg = a_elem.get('target') == 'welcomeMsg'
                 if is_topic:
                     out.append(res)
-                else:
+                elif not is_welcomemsg:
                     other.append(res)
 
             if len(other) == 1:
