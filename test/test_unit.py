@@ -3,9 +3,9 @@ import tempfile
 import yaml
 import sys
 try:
-	import unittest2 as unittest
+    import unittest2 as unittest
 except ImportError:
-	import unittest
+    import unittest
 import gg_scraper
 from gg_scraper import Group, Topic, Article  # noqa
 
@@ -27,7 +27,8 @@ class TestMBOX(unittest.TestCase):
         with open(group_file_name, 'r') as group_f:
             self.group = yaml.load(group_f)
 
-    @unittest.skipIf(sys.version_info[:2] < (2, 7), 'Formatting on 2.6 is different')
+    @unittest.skipIf(sys.version_info[:2] < (2, 7),
+                     'Formatting on 2.6 is different')
     def test_create_mbox(self):
         '''Create a mbox file from (YAMLed) Group
         '''
@@ -37,7 +38,8 @@ class TestMBOX(unittest.TestCase):
 
         with open('test/mbox.mbx') as exp_f:
             with open(mbx_file.name) as mbx_f:
-                self.assertEqual(exp_f.read(), mbx_f.read())
+                self.assertEqual(exp_f.read().strip(),
+                                 mbx_f.read().strip())
 
         os.unlink(mbx_file.name)
 

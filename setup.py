@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, print_function, unicode_literals
+import sys
 from distutils.core import setup, Command
 try:
     import unittest2 as unittest
@@ -25,7 +26,8 @@ class RunTests(Command):
     def run(self):
         tests = unittest.TestLoader().discover('test')
         runner = unittest.TextTestRunner(verbosity=2)
-        runner.run(tests)
+        res = runner.run(tests)
+        sys.exit(int(not res.wasSuccessful()))
 
 
 classifiers = [

@@ -54,12 +54,11 @@ MANGLED_ADDR_RE = re.compile(
     r'([a-zA-Z0-9_.+-]+\.\.\.@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
     re.IGNORECASE)
 
-__version__ = '0.6'
+__version__ = '0.7'
 
-if sys.version_info[:2] < (2, 7):
-    py26 = True
-else:
-    py26 = False
+pyver = sys.version_info
+py26 = pyver[:2] < (2, 7)
+py3k = pyver[0] == 3
 
 
 class Page(object):
@@ -112,15 +111,19 @@ class Article(Page):
         result = None
         try:
             res = self.opener.open(self.root)
-            if not py26:
+            if not py3k:
                 raw_msg = res.read().decode('utf8')
             else:
                 raw_msg = res.read()
             proc = subprocess.Popen(['/usr/bin/formail'],
                                     stdin=subprocess.PIPE,
-                                    stdout=subprocess.PIPE,
-                                    universal_newlines=True)
+                                    stdout=subprocess.PIPE)
+                                    #universal_newlines=True)
+            if not(py3k and isinstance(raw_msg, bytes)):
+                raw_msg = raw_msg.encode('utf8')
             result = proc.communicate(raw_msg)[0]
+            if not py3k:
+                result = result.decode('utf8')
             res.close()
         except HTTPError as exc:
             logging.warning('Exception on downloading {0}:\n{1}'.format(
@@ -298,7 +301,7 @@ class MBOX(mailbox.mbox):
                 else:
                     self.add(mbx_str.encode('utf8'))
             except UnicodeDecodeError:
-                logging.debug('mbx_str = type {0}'.format(type(mbx_str)))
+                logging.warning('mbx_str = type {0}'.format(type(mbx_str)))
         self.unlock()
         self.close()
 

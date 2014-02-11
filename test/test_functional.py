@@ -18,18 +18,21 @@ ARTICLE_URL = 'https://groups.google.com/d/msg/jbrout' + \
     '/xNwoVmC07KI/OfpRHFscUkwJ'
 
 
-def msg_wo_From(inmsg):
-    return '\n'.join(inmsg.replace('\r\n', '\n').split('\n')[1:])
-
-
 class TestGGScrapperFunctional(unittest.TestCase):
-    def setUp(self):
-        self.dired = lambda x: os.path.join(os.path.dirname(__file__), x)
+    @staticmethod
+    def msg_wo_From(inmsg):
+        if gg_scraper.py3k and isinstance(inmsg, bytes):
+            inmsg = inmsg.decode()
+        out = inmsg.replace('\r\n', '\n').split('\n')[1:]
+        return '\n'.join(out)
+
+    @staticmethod
+    def dired(x):
+        return os.path.join(os.path.dirname(__file__), x)
 
     def test_collecting_topics(self):
         page = gg_scraper.Group(IN_URL)
         topics = page.get_topics()
-        logging.debug("number of topics = %d", len(topics))
         self.assertGreater(len(topics), 0)
 
     def test_collecting_articles(self):
@@ -39,8 +42,6 @@ class TestGGScrapperFunctional(unittest.TestCase):
                                  'ubuntu 11.04 ?')
         articles = topic.get_articles()
         article_count = topic.get_count_articles()
-        logging.debug('article_count = {0:d}'.format(article_count))
-        logging.debug('articles = len {0:d}'.format(len(articles)))
         self.assertEqual(len(articles), article_count)
 
     def test_get_raw_article(self):
@@ -49,17 +50,18 @@ class TestGGScrapperFunctional(unittest.TestCase):
 
         with io.open(self.dired('message.eml'), 'r',
                      encoding='utf8') as exp_f:
-            self.assertEqual(msg_wo_From(article.collect_message()),
+            self.assertEqual(self.msg_wo_From(article.collect_message()),
                              exp_f.read())
 
     def test_py26_unicode_raw_article(self):
         self.maxDiff = None
         URL = 'https://groups.google.com/forum/message/raw?' + \
             'msg=django-oscar/BbBiMWwolf0/gn-s0sFYEhkJ'
-        article = msg_wo_From(gg_scraper.Article(URL).collect_message())
+        article = self.msg_wo_From(gg_scraper.Article(URL).collect_message())
         with io.open(self.dired('py26_unicode.eml'), 'r',
                      encoding='utf8') as exp_f:
-            self.assertEqual(article, exp_f.read())
+            expected = exp_f.read()
+            self.assertEqual(article, expected)
 
 
 if __name__ == '__main__':
