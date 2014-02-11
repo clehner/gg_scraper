@@ -1,0 +1,88 @@
+X-Received: by 10.112.141.162 with SMTP id rp2mr5556342lbb.13.1391769638691;
+        Fri, 07 Feb 2014 02:40:38 -0800 (PST)
+X-BeenThere: django-oscar@googlegroups.com
+Received: by 10.152.161.202 with SMTP id xu10ls169702lab.32.gmail; Fri, 07 Feb
+ 2014 02:40:37 -0800 (PST)
+X-Received: by 10.112.161.74 with SMTP id xq10mr5520400lbb.10.1391769637815;
+        Fri, 07 Feb 2014 02:40:37 -0800 (PST)
+Return-Path: <Maik.H...@tangentsnowball.com>
+Received: from mail.tangentuk.com (mail.tangentuk.com. [217.205.197.196])
+        by gmr-mx.google.com with ESMTPS id fl8si139070wib.1.2014.02.07.02.40.37
+        for <django...@googlegroups.com>
+        (version=TLSv1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 07 Feb 2014 02:40:37 -0800 (PST)
+Received-SPF: pass (google.com: domain of Maik.H...@tangentsnowball.com designates 217.205.197.196 as permitted sender) client-ip=217.205.197.196;
+Authentication-Results: gmr-mx.google.com;
+       spf=pass (google.com: domain of Maik.H...@tangentsnowball.com designates 217.205.197.196 as permitted sender) smtp.mail=Maik.H...@tangentsnowball.com
+Received: from [192.168.15.228] (192.168.15.228) by TNGMAIL2.tangentuk.local
+ (192.168.25.16) with Microsoft SMTP Server (TLS) id 14.3.174.1; Fri, 7 Feb
+ 2014 10:40:38 +0000
+Message-ID: <52F4B824.6060207@tangentsnowball.com>
+Date: Fri, 7 Feb 2014 10:40:36 +0000
+From: Maik Hoepfel <maik.h...@tangentsnowball.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:24.0) Gecko/20100101 Thunderbird/24.2.0
+MIME-Version: 1.0
+To: <django...@googlegroups.com>
+Subject: Re: [django-oscar] Multiple dealers dashboard
+References: <da5c5c69-c72a-4813-b0d4-10dd9e36b441@googlegroups.com>
+In-Reply-To: <da5c5c69-c72a-4813-b0d4-10dd9e36b441@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Return-Path: maik.h...@tangentsnowball.com
+X-Originating-IP: [192.168.15.228]
+X-EXCLAIMER-MD-CONFIG: 02b5924e-2ab4-42cf-8076-d2165495303d
+X-EXCLAIMER-MD-CONFIG: 6d493ab4-53fc-4eaa-916c-c7e2df41ad63
+X-TM-AS-Product-Ver: SMEX-10.2.0.1135-7.500.1017-20486.003
+X-TM-AS-Result: No--29.897900-5.000000-31
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+
+
+Hi,
+
+I forgot about that document! Sorry, that has to be confusing. I'll 
+remove it now.
+
+The multiple dealers support is now possible in Oscar 0.6 without any 
+code changes, and called "permission-based dashboard". It's documented 
+here:
+http://django-oscar.readthedocs.org/en/latest/ref/apps/dashboard.html
+
+Cheers,
+
+Maik
+
+
+On 29/01/14 02:54, aap...@gmail.com wrote:
+> Hi, I'd like to add multiple dealers support from the dashboard
+> following the oscar's documentation
+> <http://django-oscar.readthedocs.org/en/latest/howto/multi_dealer_setup.html>:
+>
+>     You’ll need to enforce creating of aStockRecord with every Product.
+>     When a Product is created, Stockrecord.partner gets set
+>     toself.request.user.partner (created if necessary), and hence the
+>     connection is made
+>
+>
+> I don't know how to enforce the StockRecord creation. I've been looking
+> at the ProductCreateUpdateView as I think is the view in which some
+> logic has to be added.
+>
+>
+> Thanks.
+>
+> --
+> https://github.com/tangentlabs/django-oscar
+> http://django-oscar.readthedocs.org/en/latest/
+> https://twitter.com/django_oscar
+> ---
+> You received this message because you are subscribed to the Google
+> Groups "django-oscar" group.
+> To unsubscribe from this group and stop receiving emails from it, send
+> an email to django-oscar...@googlegroups.com.
+> Visit this group at http://groups.google.com/group/django-oscar.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/django-oscar/da5c5c69-c72a-4813-b0d4-10dd9e36b441%40googlegroups.com.
+> For more options, visit https://groups.google.com/groups/opt_out.
+
+

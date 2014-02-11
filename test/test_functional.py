@@ -4,9 +4,9 @@ import logging
 import io
 import os.path
 try:
-	import unittest2 as unittest
+    import unittest2 as unittest
 except ImportError:
-	import unittest
+    import unittest
 import gg_scraper
 
 IN_URL = 'https://groups.google.com/forum/#!forum/jbrout'
@@ -18,7 +18,14 @@ ARTICLE_URL = 'https://groups.google.com/d/msg/jbrout' + \
     '/xNwoVmC07KI/OfpRHFscUkwJ'
 
 
+def msg_wo_From(inmsg):
+    return '\n'.join(inmsg.replace('\r\n', '\n').split('\n')[1:])
+
+
 class TestGGScrapperFunctional(unittest.TestCase):
+    def setUp(self):
+        self.dired = lambda x: os.path.join(os.path.dirname(__file__), x)
+
     def test_collecting_topics(self):
         page = gg_scraper.Group(IN_URL)
         topics = page.get_topics()
@@ -40,12 +47,19 @@ class TestGGScrapperFunctional(unittest.TestCase):
         self.maxDiff = None
         article = gg_scraper.Article(ARTICLE_URL)
 
-        rfc_msg = article.collect_message().replace('\r\n', '\n')
-        rfc_msg = '\n'.join(rfc_msg.split('\n')[1:])
+        with io.open(self.dired('message.eml'), 'r',
+                     encoding='utf8') as exp_f:
+            self.assertEqual(msg_wo_From(article.collect_message()),
+                             exp_f.read())
 
-        exp_file_name = os.path.join(os.path.dirname(__file__), 'message.eml')
-        with io.open(exp_file_name, 'r', encoding='utf8') as exp_f:
-            self.assertEqual(rfc_msg, exp_f.read())
+    def test_py26_unicode_raw_article(self):
+        self.maxDiff = None
+        URL = 'https://groups.google.com/forum/message/raw?' + \
+            'msg=django-oscar/BbBiMWwolf0/gn-s0sFYEhkJ'
+        article = msg_wo_From(gg_scraper.Article(URL).collect_message())
+        with io.open(self.dired('py26_unicode.eml'), 'r',
+                     encoding='utf8') as exp_f:
+            self.assertEqual(article, exp_f.read())
 
 
 if __name__ == '__main__':
