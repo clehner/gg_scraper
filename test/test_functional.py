@@ -14,6 +14,7 @@ ORIG_URL = 'http://groups.google.com/d/forum/jbrout'
 EXP_URL = 'https://groups.google.com/forum/' + \
     '?_escaped_fragment_=forum/jbrout'
 TOPIC_URL = 'https://groups.google.com/forum/#!topic/jbrout/xNwoVmC07KI'
+OSCAR_URL = 'https://groups.google.com/forum/#!forum/django-oscar'
 ARTICLE_URL = 'https://groups.google.com/d/msg/jbrout' + \
     '/xNwoVmC07KI/OfpRHFscUkwJ'
 
@@ -32,6 +33,11 @@ class TestGGScrapperFunctional(unittest.TestCase):
 
     def test_collecting_topics(self):
         page = gg_scraper.Group(IN_URL)
+        topics = page.get_topics()
+        self.assertGreater(len(topics), 0)
+
+    def test_collecting_oscar_topics(self):
+        page = gg_scraper.Group(OSCAR_URL)
         topics = page.get_topics()
         self.assertGreater(len(topics), 0)
 
