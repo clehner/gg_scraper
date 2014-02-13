@@ -2,6 +2,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 import sys
 from distutils.core import setup, Command
+import io
 try:
     import unittest2 as unittest
 except ImportError:
@@ -43,7 +44,7 @@ classifiers = [
 
 
 def get_long_description():
-    lines = open('README.rst').read().splitlines(False)
+    lines = io.open('README.rst', encoding='utf8').read().splitlines(False)
     return '\n' + '\n'.join(lines) + '\n'
 
 setup(name='gg_scraper',
