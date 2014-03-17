@@ -54,7 +54,7 @@ MANGLED_ADDR_RE = re.compile(
     r'([a-zA-Z0-9_.+-]+(\.)+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
     re.IGNORECASE)
 
-__version__ = '0.7'
+__version__ = '0.8'
 
 pyver = sys.version_info
 py26 = pyver[:2] < (2, 7)
@@ -266,6 +266,8 @@ class Group(Page):
                 msg_matches = MANGLED_ADDR_RE.findall(msg_str)
                 if msg_matches is not None:
                     for mtch in msg_matches:
+                        if isinstance(mtch, tuple):
+                            mtch = mtch[0]
                         if mtch in addrs:
                             addrs[mtch] += 1
                         else:
@@ -279,7 +281,12 @@ class Group(Page):
             cnf_p = ConfigParser(dict_type=OrderedDict)
             cnf_p.add_section(ADDR_SEC_LABEL)
             for addr in addrs:
-                cnf_p.set(ADDR_SEC_LABEL, addr, '')
+                try:
+                    cnf_p.set(ADDR_SEC_LABEL, addr, '')
+                except TypeError:
+                    # Failed with addr = ('richte...@gmail.com', '.')
+                    logging.info('Failed with addr = {0}'.format(addr))
+                    raise
             cnf_p.write(cnf_f)
 
 
@@ -334,7 +341,12 @@ def main(group_URL):
 def demangle(correct_list, orig_mbx, out_mbx):
     cnf_p = ConfigParser(dict_type=OrderedDict)
     cnf_p.read(correct_list)
-    pairs = dict(cnf_p.items(ADDR_SEC_LABEL))
+    #pairs = dict(cnf_p.items(ADDR_SEC_LABEL))
+    pairs = dict((k, {'repl': v, 'RE': re.compile(r'\b%s\b' % k,
+                                                  re.IGNORECASE)})
+                 for (k, v) in cnf_p.items(ADDR_SEC_LABEL)
+                 if v is not None)
+    counter = 0
 
     if os.path.exists(out_mbx):
         shutil.move(out_mbx, '{0}.bak'.format(out_mbx))
@@ -349,9 +361,11 @@ def demangle(correct_list, orig_mbx, out_mbx):
         if matches is not None:
             u_from = msg.get_from()
             for orig, fixed in pairs.items():
-                if (orig is None) or (fixed is None):
-                    continue
-                msg_str = msg_str.replace(orig, fixed)
+                #if (orig is None) or (fixed is None):
+                #    continue
+                #msg_str = msg_str.replace(orig, fixed)
+                msg_str = fixed['RE'].sub(fixed['repl'], msg_str)
+                counter += 1  # This is wrong
             out_msg = mailbox.mboxMessage(msg_str)
             out_msg.set_from(u_from)
 
@@ -360,6 +374,7 @@ def demangle(correct_list, orig_mbx, out_mbx):
             out_mbx.add(msg)
     out_mbx.close()
     in_mbx.close()
+    logging.info('Change counter = {0}'.format(counter))
 
 
 if __name__ == '__main__':
