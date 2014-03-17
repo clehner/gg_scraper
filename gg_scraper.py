@@ -51,7 +51,7 @@ logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
 
 ADDR_SEC_LABEL = 'addresses'
 MANGLED_ADDR_RE = re.compile(
-    r'([a-zA-Z0-9_.+-]+\.\.\.@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
+    r'([a-zA-Z0-9_.+-]+(\.)+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)',
     re.IGNORECASE)
 
 __version__ = '0.7'
@@ -349,7 +349,7 @@ def demangle(correct_list, orig_mbx, out_mbx):
         if matches is not None:
             u_from = msg.get_from()
             for orig, fixed in pairs.items():
-                if (orig is not None) and (fixed is not None):
+                if (orig is None) or (fixed is None):
                     continue
                 msg_str = msg_str.replace(orig, fixed)
             out_msg = mailbox.mboxMessage(msg_str)
