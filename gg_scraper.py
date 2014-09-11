@@ -111,10 +111,12 @@ class Article(Page):
         result = None
         try:
             res = self.opener.open(self.root)
+            raw_msg = res.read()
             if not py3k:
-                raw_msg = res.read().decode('utf8')
-            else:
-                raw_msg = res.read()
+                try:
+                    raw_msg = raw_msg.decode('utf8')
+                except UnicodeDecodeError:
+                    pass
             proc = subprocess.Popen(['/usr/bin/formail'],
                                     stdin=subprocess.PIPE,
                                     # universal_newlines=True,
