@@ -43,7 +43,7 @@ try:
 except ImportError:
     from urllib2 import (HTTPError, HTTPHandler, HTTPRedirectHandler,
                          build_opener)
-#from concurrent.futures import ProcessPoolExecutor
+# from concurrent.futures import ProcessPoolExecutor
 from bs4 import BeautifulSoup
 import logging
 logging.basicConfig(format='%(levelname)s:%(funcName)s:%(message)s',
@@ -117,8 +117,8 @@ class Article(Page):
                 raw_msg = res.read()
             proc = subprocess.Popen(['/usr/bin/formail'],
                                     stdin=subprocess.PIPE,
+                                    # universal_newlines=True,
                                     stdout=subprocess.PIPE)
-                                    #universal_newlines=True)
             if not(py3k and isinstance(raw_msg, bytes)):
                 raw_msg = raw_msg.encode('utf8')
             result = proc.communicate(raw_msg)[0]
@@ -241,7 +241,7 @@ class Group(Page):
         self.topics = self.get_topics()
         len_topics = len(self.topics)
         for top in self.topics:
-            #print('[%d/%d] downloading "%s"' % (self.topics.index(top),
+            # print('[%d/%d] downloading "%s"' % (self.topics.index(top),
             #      len_topics, top.name))
             print('[%d/%d] downloading' % (self.topics.index(top), len_topics))
             arts = top.get_articles()
@@ -341,7 +341,7 @@ def main(group_URL):
 def demangle(correct_list, orig_mbx, out_mbx):
     cnf_p = ConfigParser(dict_type=OrderedDict)
     cnf_p.read(correct_list)
-    #pairs = dict(cnf_p.items(ADDR_SEC_LABEL))
+    # pairs = dict(cnf_p.items(ADDR_SEC_LABEL))
     pairs = dict((k, {'repl': v, 'RE': re.compile(r'\b%s\b' % k,
                                                   re.IGNORECASE)})
                  for (k, v) in cnf_p.items(ADDR_SEC_LABEL)
@@ -361,9 +361,9 @@ def demangle(correct_list, orig_mbx, out_mbx):
         if matches is not None:
             u_from = msg.get_from()
             for orig, fixed in pairs.items():
-                #if (orig is None) or (fixed is None):
+                # if (orig is None) or (fixed is None):
                 #    continue
-                #msg_str = msg_str.replace(orig, fixed)
+                # msg_str = msg_str.replace(orig, fixed)
                 msg_str = fixed['RE'].sub(fixed['repl'], msg_str)
                 counter += 1  # This is wrong
             out_msg = mailbox.mboxMessage(msg_str)
@@ -378,8 +378,8 @@ def demangle(correct_list, orig_mbx, out_mbx):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description=
-                                     'Scrape a Google Groups group.')
+    parser = argparse.ArgumentParser(
+        description='Scrape a Google Groups group.')
     parser.add_argument('group', metavar='URL', nargs='?',
                         help='URL of the group')
     parser.add_argument('-d', '--demangle', metavar='DEMANGLE_FILE', nargs=3,
